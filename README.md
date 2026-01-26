@@ -1,3 +1,18 @@
+## ℹ️ Información
+
+Este proyecto fue desarrollado con fines académicos.
+
+**Desarrollado por:**  
+Fernando Zambrano  
+
+**Universidad:**  
+Universidad Estatal Amazónica  
+
+**Asignatura:**  
+Aplicaciones Móviles
+
+---
+
 # 📦 Proyecto de Marcación – Frontend & Backend
 
 Este repositorio contiene **dos proyectos principales**, organizados para el desarrollo de una aplicación móvil conectada a un backend.
@@ -44,15 +59,4 @@ Funciones principales:
 
 ---
 
-## ℹ️ Nota
 
-Este proyecto fue desarrollado con fines académicos.
-
-**Desarrollado por:**  
-Fernando Zambrano  
-
-**Universidad:**  
-Universidad Estatal Amazónica  
-
-**Asignatura:**  
-Aplicaciones Móviles
