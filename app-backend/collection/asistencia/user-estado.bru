@@ -1,0 +1,22 @@
+meta {
+  name: /user/estado
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{url}}/user/estado
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "cusuario": 23,
+    "estado": 1
+  }
+}

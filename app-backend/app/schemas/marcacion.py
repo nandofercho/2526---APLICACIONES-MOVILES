@@ -11,3 +11,4 @@ class MarcacionUpdate(BaseModel):
 
 class MarcacionDelete(BaseModel):
     fecha: str
+    hora: str

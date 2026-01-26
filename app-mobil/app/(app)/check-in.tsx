@@ -1,8 +1,28 @@
-import { View, Text, StyleSheet, Pressable, FlatList, Image } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Pressable,
+    FlatList,
+    Image,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Swipeable } from 'react-native-gesture-handler';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+
 import { useAuth } from '@src/context/AuthContext';
+import {
+    listarMarcaciones,
+    registrarMarcacionApi,
+    eliminarMarcacionApi,
+} from '@src/services/marcacion.service';
+
+/* ---------- CONFIG FECHAS ---------- */
+dayjs.locale('es');
+const fecha = dayjs().format('YYYY-MM-DD');
 
 /* ---------- TIPOS ---------- */
 interface Marcacion {
@@ -13,29 +33,89 @@ interface Marcacion {
 
 export default function CheckIn() {
     const { usuario } = useAuth();
+    const [marcaciones, setMarcaciones] = useState<Marcacion[]>([]);
+    const [cargando, setCargando] = useState(false);
 
-    const [marcaciones, setMarcaciones] = useState<Marcacion[]>([
-        { id: 1, fecha: '2026-01-20', hora: '08:05' },
-        { id: 2, fecha: '2026-01-20', hora: '17:12' },
-    ]);
+    /* ---------- CARGAR LISTADO ---------- */
+    const cargarMarcaciones = async () => {
+        if (!usuario?.id) return;
 
-    const registrarMarcacion = () => {
-        const ahora = new Date();
-
-        const nueva: Marcacion = {
-            id: marcaciones.length + 1,
-            fecha: ahora.toISOString().split('T')[0],
-            hora: ahora.toLocaleTimeString().slice(0, 5),
-        };
-
-        setMarcaciones([nueva, ...marcaciones]);
-
-        Toast.show({
-            type: 'success',
-            text1: 'Marcación registrada',
-            text2: `Marcación #${nueva.id} • ${nueva.hora}`,
-        });
+        try {
+            setCargando(true);
+            const data = await listarMarcaciones(
+                usuario.id,
+                fecha,
+                fecha
+            );
+            setMarcaciones(data);
+        } catch (error: any) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error al cargar marcaciones',
+                text2: error.message,
+            });
+        } finally {
+            setCargando(false);
+        }
     };
+
+    useEffect(() => {
+        cargarMarcaciones();
+    }, []);
+
+    /* ---------- REGISTRAR ---------- */
+    const registrarMarcacion = async () => {
+        try {
+            await registrarMarcacionApi();
+
+            Toast.show({
+                type: 'success',
+                text1: 'Marcación registrada',
+            });
+
+            cargarMarcaciones();
+        } catch (error: any) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error al registrar',
+                text2: error.message,
+            });
+        }
+    };
+
+    /* ---------- ELIMINAR ---------- */
+    const eliminarMarcacion = async (item: Marcacion) => {
+        try {
+            await eliminarMarcacionApi(
+                item.fecha,
+                item.hora
+            );
+
+            Toast.show({
+                type: 'success',
+                text1: 'Marcación eliminada',
+            });
+
+            cargarMarcaciones();
+        } catch (error: any) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error al eliminar',
+                text2: error.message,
+            });
+        }
+    };
+
+    /* ---------- BOTÓN SWIPE ---------- */
+    const renderRightActions = (item: Marcacion) => (
+        <Pressable
+            style={styles.deleteButton}
+            onPress={() => eliminarMarcacion(item)}
+        >
+            <MaterialIcons name="delete" size={26} color="#fff" />
+            <Text style={styles.deleteText}>Eliminar</Text>
+        </Pressable>
+    );
 
     return (
         <View style={styles.container}>
@@ -48,42 +128,56 @@ export default function CheckIn() {
                 />
 
                 <Text style={styles.title}>MARCACIÓN</Text>
-                <Text style={styles.subtitle}>
-                    {usuario?.nombre} {usuario?.apellido}
-                </Text>
             </View>
 
             {/* BOTÓN MARCAR */}
             <View style={styles.buttonWrapper}>
-                <Pressable style={styles.button} onPress={registrarMarcacion}>
+                <Pressable
+                    style={styles.button}
+                    onPress={registrarMarcacion}
+                    disabled={cargando}
+                >
                     <MaterialIcons name="fingerprint" size={26} color="#fff" />
-                    <Text style={styles.buttonText}>MARCAR</Text>
+                    <Text style={styles.buttonText}>
+                        {cargando ? 'PROCESANDO...' : 'MARCAR'}
+                    </Text>
                 </Pressable>
             </View>
 
             {/* LISTADO */}
             <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>HISTORIAL DE MARCACIONES</Text>
+                <Text style={styles.sectionTitle}>
+                    HISTORIAL DE MARCACIONES
+                </Text>
             </View>
 
             <FlatList
                 contentContainerStyle={styles.list}
                 data={marcaciones}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <View style={styles.cardLeft}>
-                            <MaterialIcons name="check-circle" size={22} color="#8b5cf6" />
-                            <Text style={styles.cardTitle}>
-                                Marcación #{item.id}
-                            </Text>
-                        </View>
+                refreshing={cargando}
+                onRefresh={cargarMarcaciones}
+                renderItem={({ item, index }) => (
+                    <Swipeable
+                        renderRightActions={() => renderRightActions(item)}
+                    >
+                        <View style={styles.card}>
+                            <View style={styles.cardLeft}>
+                                <MaterialIcons
+                                    name="check-circle"
+                                    size={22}
+                                    color="#8b5cf6"
+                                />
+                                <Text style={styles.cardTitle}>
+                                    Marcación #{index + 1}
+                                </Text>
+                            </View>
 
-                        <View style={styles.cardRight}>
-                            <Text style={styles.cardFecha}>{item.fecha}</Text>
-                            <Text style={styles.cardHora}>{item.hora}</Text>
+                            <View style={styles.cardRight}>
+                                <Text style={styles.cardFecha}>{item.fecha}</Text>
+                                <Text style={styles.cardHora}>{item.hora}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </Swipeable>
                 )}
                 ListEmptyComponent={
                     <Text style={styles.empty}>
@@ -104,8 +198,7 @@ const styles = StyleSheet.create({
 
     header: {
         alignItems: 'center',
-        paddingTop: 50,
-        paddingBottom: 20,
+        paddingTop: 25,
     },
 
     avatar: {
@@ -118,12 +211,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '700',
         color: '#111',
-    },
-
-    subtitle: {
-        fontSize: 13,
-        color: '#8b5cf6',
-        marginTop: 4,
     },
 
     buttonWrapper: {
@@ -208,5 +295,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 30,
         color: '#8b8b8b',
+    },
+
+    deleteButton: {
+        backgroundColor: '#ef4444',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 90,
+        borderRadius: 16,
+        marginBottom: 12,
+    },
+
+    deleteText: {
+        color: '#fff',
+        fontSize: 12,
+        marginTop: 4,
+        fontWeight: '600',
     },
 });

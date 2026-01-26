@@ -1,0 +1,22 @@
+meta {
+  name: /auth/register
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "identificacion": "0603908914",
+    "nombre": "Administrador",
+    "apellido": "Sistema",
+    "email": "admin@mijin.edu.ec",
+    "password": "admin"
+  }
+  
+}

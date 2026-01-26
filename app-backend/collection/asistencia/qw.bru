@@ -1,0 +1,23 @@
+meta {
+  name: /marcacion/listado
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{url}}/marcacion/listado
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "cusuario": 1,
+    "finicio": "2026-01-01",
+    "ffin": "2027-01-01"
+  }
+}

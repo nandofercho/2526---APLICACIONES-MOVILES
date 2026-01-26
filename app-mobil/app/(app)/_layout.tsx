@@ -1,16 +1,19 @@
 import { Drawer } from 'expo-router/drawer';
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+
 import CustomDrawerContent from '@src/components/DrawerContent';
+import { useAuth } from '@src/context/AuthContext';
 
 export default function AppLayout() {
+    const { usuario } = useAuth();
+
     return (
         <Drawer
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
                 headerTitleAlign: 'center',
                 drawerItemStyle: {
-                    borderRadius: 14, // mismo redondeado
+                    borderRadius: 14,
                 },
                 drawerActiveBackgroundColor: '#e0ecff',
                 drawerActiveTintColor: '#2563eb',
@@ -29,13 +32,13 @@ export default function AppLayout() {
             <Drawer.Screen
                 name="profile"
                 options={{
-                    title: 'Perfíl',
+                    title: 'Perfil',
                     drawerIcon: ({ color, size }) => (
                         <Ionicons name="person-outline" size={size} color={color} />
                     ),
                 }}
             />
-           
+
             <Drawer.Screen
                 name="check-in"
                 options={{
@@ -45,6 +48,33 @@ export default function AppLayout() {
                     ),
                 }}
             />
+
+            <Drawer.Screen
+                name="historial"
+                options={{
+                    title: 'Historial',
+                    drawerIcon: ({ color, size }) => (
+                        <MaterialIcons name="list" size={size} color={color} />
+                    ),
+                }}
+            />
+
+            {/* SOLO ADMIN */}
+            {usuario?.rol === 'admin' && (
+                <Drawer.Screen
+                    name="users"
+                    options={{
+                        title: 'Usuarios',
+                        drawerIcon: ({ color, size }) => (
+                            <MaterialIcons
+                                name="supervisor-account"
+                                size={size}
+                                color={color}
+                            />
+                        ),
+                    }}
+                />
+            )}
 
             <Drawer.Screen
                 name="settings"

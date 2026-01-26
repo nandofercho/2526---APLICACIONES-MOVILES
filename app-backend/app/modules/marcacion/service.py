@@ -26,8 +26,8 @@ async def modificar_marcacion(cusuario: int, fecha_anterior: str, fecha_nueva: s
 
     return {"mensaje": "Marcación actualizada"}
 
-async def borrar_marcacion(cusuario: int, fecha: str):
-    filas = await eliminar_marcacion(cusuario, fecha)
+async def borrar_marcacion(cusuario: int, fecha: str, hora: str):
+    filas = await eliminar_marcacion(cusuario, fecha, hora)
 
     if filas == 0:
         raise HTTPException(

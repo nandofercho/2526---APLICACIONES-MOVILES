@@ -5,13 +5,32 @@ import {
 } from '@react-navigation/drawer';
 import { useRouter } from 'expo-router';
 
+import { useAuth } from '@src/context/AuthContext';
+
 export default function CustomDrawerContent(props: any) {
   const router = useRouter();
+  const { usuario } = useAuth();
+
+  /* ---------- FILTRAR RUTAS SEGÚN ROL ---------- */
+  const filteredRoutes = props.state.routes.filter((route: any) => {
+    // Ocultar USERS si no es admin
+    if (route.name === 'users' && usuario?.rol !== 'admin') {
+      return false;
+    }
+    return true;
+  });
+
+  const filteredState = {
+    ...props.state,
+    routes: filteredRoutes,
+    index: Math.min(props.state.index, filteredRoutes.length - 1),
+  };
 
   return (
     <View style={styles.container}>
       <DrawerContentScrollView
         {...props}
+        state={filteredState}
         contentContainerStyle={styles.scroll}
       >
         {/* LOGO */}
@@ -21,14 +40,12 @@ export default function CustomDrawerContent(props: any) {
             style={styles.logo}
             resizeMode="contain"
           />
-
           <Text style={styles.subtitle}>Aplicación</Text>
-
         </View>
 
         {/* MENÚ */}
         <View style={styles.menu}>
-          <DrawerItemList {...props} />
+          <DrawerItemList {...props} state={filteredState} />
         </View>
       </DrawerContentScrollView>
 
@@ -45,6 +62,7 @@ export default function CustomDrawerContent(props: any) {
   );
 }
 
+/* ---------- ESTILOS ---------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,

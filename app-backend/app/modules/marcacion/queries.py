@@ -34,12 +34,13 @@ async def actualizar_marcacion(cusuario: int, fecha_anterior: str, fecha_nueva: 
         (fecha_nueva, cusuario, fecha_anterior)
     )
 
-async def eliminar_marcacion(cusuario: int, fecha: str):
+async def eliminar_marcacion(cusuario: int, fecha: str, hora: str):
     return await execute(
         """
         delete from marcacion
         where cusuario = %s
-          and fecha = %s
+          and date_format(fecha, '%%Y-%%m-%%d') = %s
+          and date_format(fecha, '%%H:%%i:%%s') = %s
         """,
-        (cusuario, fecha)
+        (cusuario, fecha, hora)
     )

@@ -25,11 +25,11 @@ async def post_listado_marcacion(
         data.ffin
     )
 
-@router.post("")
+@router.post("/insertar")
 async def post_marcacion(user=Depends(get_current_user)):
     return await crear_marcacion(user["cusuario"])
 
-@router.put("")
+@router.put("/modificar")
 async def put_marcacion(
     data: MarcacionUpdate,
     user=Depends(get_current_user)
@@ -40,12 +40,13 @@ async def put_marcacion(
         data.fecha_nueva
     )
 
-@router.delete("")
+@router.post("/eliminar")
 async def delete_marcacion(
     data: MarcacionDelete,
     user=Depends(get_current_user)
 ):
     return await borrar_marcacion(
         user["cusuario"],
-        data.fecha
+        data.fecha,
+        data.hora
     )

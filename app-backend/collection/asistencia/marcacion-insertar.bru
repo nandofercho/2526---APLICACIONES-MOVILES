@@ -1,0 +1,15 @@
+meta {
+  name: /marcacion/insertar
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{url}}/marcacion/insertar
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
