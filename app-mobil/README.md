@@ -156,14 +156,6 @@ El menú y las rutas se controlan usando el **rol almacenado en el JWT**.
 
 ---
 
-## 🧪 Credenciales de prueba
-
-```json
-Email: admin@uea.edu.ec
-Password: admin
-```
-
----
 
 ## 🧠 Notas importantes
 
@@ -171,13 +163,6 @@ Password: admin
 - Las rutas están protegidas por rol
 - El Drawer se filtra dinámicamente
 - Swipe iOS / Android habilitado
-
----
-
-## 👨‍💻 Autor
-
-**Desarrollado por:** Santiago  
-Proyecto académico – Sistema de Marcación
 
 ---
 
