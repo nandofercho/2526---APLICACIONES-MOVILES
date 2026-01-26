@@ -1,0 +1,4 @@
+pip install fastapi uvicorn aiomysql passlib[bcrypt] python-dotenv
+pip install email-validator
+pip install bcrypt
+pip install python-jose
