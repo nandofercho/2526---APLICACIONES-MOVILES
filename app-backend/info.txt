@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-aiomysql
-passlib[bcrypt]
-python-dotenv
-email-validator
-bcrypt
-python-jose

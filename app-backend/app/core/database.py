@@ -35,6 +35,16 @@ async def execute(query: str, params: tuple = ()):
             await conn.commit()
             return cursor.rowcount
 
+async def execute_return_id(query: str, params: tuple = ()):
+    if not _pool:
+        raise RuntimeError("pool no inicializado")
+
+    async with _pool.acquire() as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(query, params)
+            await conn.commit()
+            return cursor.lastrowid
+
 async def fetch_one(query: str, params: tuple = ()):
     if not _pool:
         raise RuntimeError("pool no inicializado")
