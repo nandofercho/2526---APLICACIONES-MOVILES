@@ -76,7 +76,7 @@ insert into usuario (
     estado
 ) values 
 ('0000000000', 'Administrador', 'Sistema', 'admin@uea.edu.ec', '$2b$12$5wWiihf1S6Oi8PIRrzwgs.TDlI2Q2KBSI25h0nK5qZDIr88e7ydh2',  1),
-('1600598336', 'Fernando', 'Zambrano', 'hf.zambranol@uea.edu.ec', '$2b$12$tiM6df9130GeRvVCy6VnD.ZpXBjPC09SIJik2KBtsCj9T/QHYne5e', 1);
+('1600598336', 'Fernando', 'Zambrano', 'hf.zambranol@uea.edu.ec', '$$t2b$12iM6df9130GeRvVCy6VnD.ZpXBjPC09SIJik2KBtsCj9T/QHYne5e', 1);
 
 insert into usuario_rol (cusuario, crol)
 values (1, 1), (2, 1);

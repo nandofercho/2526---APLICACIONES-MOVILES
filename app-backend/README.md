@@ -101,7 +101,7 @@ jwt_exp_minutes=
 ## 🔑 5️⃣ Arrancar la API
 
 ```bash
-python -m uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload --host 0.0.0.0
 ```
 
 API disponible en:
