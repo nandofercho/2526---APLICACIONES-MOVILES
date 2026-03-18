@@ -11,8 +11,8 @@ async def listado_marcacion(cusuario: int, finicio: str, ffin: str):
     print(x)
     return x
 
-async def crear_marcacion(cusuario: int):
-    await insertar_marcacion(cusuario)
+async def crear_marcacion(cusuario: int, latitud: float, longitud: float ):
+    await insertar_marcacion(cusuario, latitud, longitud)
     return {"mensaje": "Marcación registrada"}
 
 async def modificar_marcacion(cusuario: int, fecha_anterior: str, fecha_nueva: str):

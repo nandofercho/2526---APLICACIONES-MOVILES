@@ -14,13 +14,13 @@ async def get_marcacion(cusuario: int, finicio: str, ffin: str):
         (cusuario, finicio, ffin)
     )
 
-async def insertar_marcacion(cusuario: int):
+async def insertar_marcacion(cusuario: int, latitud: float, longitud: float):
     return await execute(
         """
-        insert into marcacion (cusuario, fecha)
-        values (%s, now())
+        insert into marcacion (cusuario, fecha, latitud, longitud)
+        values (%s, now(), %s, %s)
         """,
-        (cusuario,)
+        (cusuario, latitud, longitud)
     )
 
 async def actualizar_marcacion(cusuario: int, fecha_anterior: str, fecha_nueva: str):

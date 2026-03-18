@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from app.utils.jwt import get_current_user
 from app.schemas.marcacion import (
+    MarcacionInsert,
     MarcacionUpdate,
     MarcacionDelete,
     MarcacionListado
@@ -26,8 +27,15 @@ async def post_listado_marcacion(
     )
 
 @router.post("/insertar")
-async def post_marcacion(user=Depends(get_current_user)):
-    return await crear_marcacion(user["cusuario"])
+async def post_marcacion(
+    data: MarcacionInsert,
+    user=Depends(get_current_user)
+):
+    return await crear_marcacion(
+        user["cusuario"], 
+        data.latitud,
+        data.longitud
+        )
 
 @router.put("/modificar")
 async def put_marcacion(

@@ -11,6 +11,20 @@ export interface Usuario {
     rol: string;
 }
 
+/* ---------- FOTO ---------- */
+export const obtenerImagenApi = async () => {
+     return await httpFetch(`/user/imagen`, {
+        method: 'GET',
+    });
+}
+
+export async function subirImagenApi(formData: FormData): Promise<void> {
+    return await httpFetch('/user/imagen', {
+        method: 'POST',
+        body: formData,
+    });
+}
+
 /* ---------- LISTADO ---------- */
 export async function listarUsuarios(): Promise<Usuario[]> {
     return await httpFetch('/user/listado', {

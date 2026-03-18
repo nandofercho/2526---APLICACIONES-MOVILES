@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { Swipeable } from 'react-native-gesture-handler';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import * as Location from 'expo-location';
 
 import { useAuth } from '@src/context/AuthContext';
 import {
@@ -35,6 +36,36 @@ export default function CheckIn() {
     const { usuario } = useAuth();
     const [marcaciones, setMarcaciones] = useState<Marcacion[]>([]);
     const [cargando, setCargando] = useState(false);
+
+    /* ---------- UBICACIÓN ---------- */
+    const obtenerUbicacion = async () => {
+        try {
+            const enabled = await Location.hasServicesEnabledAsync();
+            if (!enabled) {
+                throw new Error('Activa el GPS');
+            }
+
+            const { status } =
+                await Location.requestForegroundPermissionsAsync();
+
+            if (status !== 'granted') {
+                throw new Error('Permiso de ubicación denegado');
+            }
+
+            const location = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.High,
+            });
+
+            return {
+                latitud: location.coords.latitude,
+                longitud: location.coords.longitude,
+            };
+        } catch (error: any) {
+            throw new Error(
+                error.message || 'No se pudo obtener ubicación'
+            );
+        }
+    };
 
     /* ---------- CARGAR LISTADO ---------- */
     const cargarMarcaciones = async () => {
@@ -66,7 +97,12 @@ export default function CheckIn() {
     /* ---------- REGISTRAR ---------- */
     const registrarMarcacion = async () => {
         try {
-            await registrarMarcacionApi();
+            setCargando(true);
+
+            // 📍 Obtener ubicación
+            const ubicacion = await obtenerUbicacion();
+
+            await registrarMarcacionApi(ubicacion.latitud, ubicacion.longitud);
 
             Toast.show({
                 type: 'success',
@@ -80,6 +116,8 @@ export default function CheckIn() {
                 text1: 'Error al registrar',
                 text2: error.message,
             });
+        } finally {
+            setCargando(false);
         }
     };
 
@@ -188,6 +226,7 @@ export default function CheckIn() {
         </View>
     );
 }
+
 
 /* ---------- ESTILOS ---------- */
 const styles = StyleSheet.create({

@@ -24,9 +24,16 @@ export async function listarMarcaciones(
 }
 
 /* ---------- INSERTAR ---------- */
-export async function registrarMarcacionApi(): Promise<void> {
+export async function registrarMarcacionApi(
+    latitud: number,
+    longitud: number
+): Promise<void> {
     return await httpFetch('/marcacion/insertar', {
         method: 'POST',
+        body: JSON.stringify({
+            latitud,
+            longitud,
+        }),
     });
 }
 

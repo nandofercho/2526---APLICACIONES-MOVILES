@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { obtenerToken, eliminarToken } from '@src/services/session.service';
+import { jwtDecode } from 'jwt-decode';
 
 interface Usuario {
     id?: number;
@@ -24,16 +25,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-        // Al iniciar la app, revisamos si hay sesión
         const cargarSesion = async () => {
-            const token = await obtenerToken();
+            try {
+                const token = await obtenerToken();
 
-            if (token) {
-                // 👉 luego aquí decodificaremos el JWT
-                console.log('Token encontrado');
+                if (token) {
+                    console.log('Token encontrado');
+
+                    const decoded: any = jwtDecode(token);
+
+                    setUsuario({
+                        id: decoded.cusuario,
+                        nombre: decoded.nombre,
+                        apellido: decoded.apellido,
+                        identificacion: decoded.identificacion,
+                        email: decoded.email,
+                        rol: decoded.rol,
+                    });
+                }
+            } catch (error) {
+                console.log('Error cargando sesión', error);
+            } finally {
+                setCargando(false);
             }
-
-            setCargando(false);
         };
 
         cargarSesion();
@@ -58,7 +72,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
-// Hook para usar auth fácilmente
 export function useAuth() {
     return useContext(AuthContext);
 }
